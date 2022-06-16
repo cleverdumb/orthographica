@@ -1,0 +1,383 @@
+<html>
+    <head>
+        <title>Orthographica</title>
+    </head>
+    <body>
+        <script src='tools.js'></script>
+        <canvas id='tcvs'></canvas>
+        <br>
+        <br>
+        <canvas id='fcvs'></canvas>
+        <canvas id='scvs'></canvas>
+        <script>
+            const fcvs = document.getElementById('fcvs');
+            const fctx = fcvs.getContext('2d');
+
+            fcvs.width = 300;
+            fcvs.height = 300;
+            fcvs.style.border = '1px solid black';
+            fcvs.style.marginRight = 15;
+
+
+            const tcvs = document.getElementById('tcvs');
+            const tctx = tcvs.getContext('2d');
+
+            tcvs.width = 300;
+            tcvs.height = 300;
+            tcvs.style.border = '1px solid black';
+
+            const scvs = document.getElementById('scvs');
+            const sctx = scvs.getContext('2d');
+
+            scvs.width = 300;
+            scvs.height = 300;
+            scvs.style.border = '1px solid black';
+
+            // let hgrid = [];
+            let grid = [];
+
+            // for (let y=0; y<50; y++) {
+            //     hgrid.push([]);
+            //     for (let x=0; x<50; x++) {
+            //         hgrid[y].push(0);
+            //     }
+            // }
+
+            // for (let a=0; a<450; a++) {
+            //     hgrid[Math.round(Math.random()*49)][Math.round(Math.random()*49)] = Math.round(Math.random()*30);
+            // }
+
+            // let unused = [];
+
+            // hgrid.forEach((y,yi)=>{
+            //     y.forEach((x,xi)=>{
+            //         if (hgrid[yi][xi] == 0) {
+            //             unused.push({x:xi,y:yi});
+            //         }
+            //     })
+            // })
+
+            // unused = unused.sort(()=>Math.random()-0.5);
+
+            // unused.forEach(item=>{
+            //     let x = item.x;
+            //     let y = item.y;
+            //     let sum = 0;
+            //     sum += hgrid[y-1]?.[x] || 0;
+            //     sum += hgrid[y+1]?.[x] || 0;
+            //     sum += hgrid[y]?.[x-1] || 0;
+            //     sum += hgrid[y]?.[x+1] || 0;
+            //     sum += hgrid[y-1]?.[x-1] || 0;
+            //     sum += hgrid[y-1]?.[x+1] || 0;
+            //     sum += hgrid[y+1]?.[x-1] || 0;
+            //     sum += hgrid[y+1]?.[y+1] || 0;
+            //     sum /= 200;
+            //     sum += 35;
+            //     sum += Math.round(Math.random()*4)-4;
+            //     hgrid[y][x] = Math.round(sum);
+            // })
+
+            // let max = -Infinity;
+            // let aver = 0;
+            // hgrid.forEach(x=>{
+            //     x.forEach(y=>{
+            //         aver += y;
+            //         if (y > max) {
+            //             max = y;
+            //         }
+            //     })
+            // })
+
+            // // console.log(grid);
+            // // console.log(max);
+            // // console.log(aver/2500);
+
+            // for (let a=0; a<4; a++) {
+            //     hgrid.forEach((y,yi)=>{
+            //         y.forEach((x,xi)=>{
+            //             let sum = 0;
+            //             sum += hgrid[yi+1]?.[xi] || 0;
+            //             sum += hgrid[yi-1]?.[xi] || 0;
+            //             sum += hgrid[yi]?.[xi+1] || 0;
+            //             sum += hgrid[yi]?.[xi-1] || 0;
+            //             if (hgrid[yi][xi] < sum/4) {
+            //                 hgrid[yi][xi]++;
+            //             }
+            //             else if (hgrid[yi][xi] > sum/4) {
+            //                 hgrid[yi][xi]--;
+            //             }
+
+            //             sum = 0;
+            //             sum += hgrid[yi+2]?.[xi+2] || 0;
+            //             sum += hgrid[yi-2]?.[xi-2] || 0;
+            //             sum += hgrid[yi-2]?.[xi+2] || 0;
+            //             sum += hgrid[yi+2]?.[xi-2] || 0;
+
+            //             if (hgrid[yi][xi] - 5 > sum/8) {
+            //                 hgrid[yi][xi] -= 5;
+            //             }
+            //             else if (hgrid[yi][xi] + 5 < sum/8) {
+            //                 hgrid[yi][xi] += 5;
+            //             }
+            //         })
+            //     })
+            // }
+
+            // console.log(hgrid);
+
+            for (let z=0; z<50; z++) {
+                grid.push([]);
+                for (let y=0; y<50; y++) {
+                    grid[z].push([])
+                    for (let x=0; x<50; x++) {
+                        grid[z][y].push(0);
+                    }
+                }
+            }
+
+            let hgrid = [];
+
+            for (let y=0; y<50; y++) {
+                hgrid.push([]);
+                for (let x=0; x<50; x++) {
+                    hgrid[y].push(10);
+                }
+            }
+
+            class Mountain {
+                constructor(x,y) {
+                    this.x = x;
+                    this.y = y;
+                    this.peak = 30;
+                    this.target = 10;
+                    this.genedBlocks = [];
+                    this.buffer = [];
+                    this.justGened = [{x:this.x,y:this.y,h:this.peak}];
+                }
+                generate() {
+                    console.log('generate');
+                    hgrid[this.y][this.x] = this.peak;
+                    let c = 0;
+                    while (!(this.justGened.some(x=>x.h<this.target)) || !(this.genedBlocks.some(x=>x.h<this.target))) {
+                        console.log(++c);
+                        this.buffer = [...this.justGened];
+                        this.justGened = [];
+                        this.buffer.forEach(x=>{
+                            console.log(x);
+                            if (hgrid[x.y-1]?.[x.x] && !(this.genedBlocks.some(a=>(a.x==x.x&&a.y==x.y-1)))) {
+                                let height = (Math.round(Math.random()*1))+1
+                                console.log(height);
+                                hgrid[x.y-1][x.x] = Math.max(x.h-height,(hgrid[x.y-1][x.x],x.h-height));
+                                this.justGened.push({x:x.x,y:x.y-1,h:x.h-height});
+                                this.genedBlocks.push({x:x.x,y:x.y-1,h:x.h-height});
+                            };
+                            if (hgrid[x.y+1]?.[x.x] && !(this.genedBlocks.some(a=>(a.x==x.x&&a.y==x.y+1)))) {
+                                let height = (Math.round(Math.random()*1))+1
+                                console.log(height);
+                                hgrid[x.y+1][x.x] = Math.max(x.h-height,(hgrid[x.y+1][x.x],x.h-height));
+                                this.justGened.push({x:x.x,y:x.y+1,h:x.h-height});
+                                this.genedBlocks.push({x:x.x,y:x.y-1,h:x.h-height});
+                            };
+                            if (hgrid[x.y]?.[x.x-1] && !(this.genedBlocks.some(a=>(a.x==x.x-1&&a.y==x.y)))) {
+                                let height = (Math.round(Math.random()*1))+1
+                                console.log(height);
+                                hgrid[x.y][x.x-1] = Math.max(x.h-height,(hgrid[x.y][x.x-1],x.h-height));
+                                this.justGened.push({x:x.x-1,y:x.y,h:x.h-height});
+                                this.genedBlocks.push({x:x.x,y:x.y-1,h:x.h-height});
+                            };
+                            if (hgrid[x.y]?.[x.x+1] && !(this.genedBlocks.some(a=>(a.x==x.x+1&&a.y==x.y)))) {
+                                let height = (Math.round(Math.random()*1))+1
+                                console.log(height);
+                                hgrid[x.y][x.x+1] = Math.max(x.h-height,(hgrid[x.y][x.x+1],x.h-height));
+                                this.justGened.push({x:x.x+1,y:x.y,h:x.h-height});
+                                this.genedBlocks.push({x:x.x,y:x.y-1,h:x.h-height});
+                            };
+
+                        })
+                        this.genedBlocks = this.genedBlocks.concat(this.buffer);
+                        this.buffer = [];
+                    }
+                }
+            }
+
+            let mountains = [];
+            for (let x=0; x<5; x++) {
+                mountains.push(new Mountain(Math.round(Math.random()*49),Math.round(Math.random()*49)))
+            }
+            mountains.forEach(x=>{
+                x.generate();
+            })
+
+            let max = -Infinity;
+            hgrid.forEach(y=>{
+                y.forEach(x=>{
+                    if (x > max) {
+                        max = x;
+                    }
+                })
+            })
+
+            grid.forEach((z,zi)=>{
+                z.forEach((y,yi)=>{
+                    y.forEach((x,xi)=>{
+                        // console.log(zi,yi,xi);
+
+                        if (hgrid[zi][xi] > 50-yi) {
+                            grid[zi][yi][xi] = 'blue';
+                        }
+                        else {
+                            grid[zi][yi][xi] = 'red';
+                        }
+
+                        // grid[zi][yi][xi] = Math.random()>0.5?'red':'blue';
+                    })
+                })
+            })
+
+            // grid.forEach(z=>{
+            //     z.pop();
+            //     z.pop();
+            //     z.pop();
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.pop();
+            //     z.pop();
+            //     z.pop();
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.pop();
+            //     z.pop();
+            //     z.pop();
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.pop();
+            //     z.pop();
+            //     z.pop();
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.pop();
+            //     z.pop();
+            //     z.pop();
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+            //     z.unshift(new Array(50).fill('blue'));
+
+            // })
+
+            class Player {
+                constructor(x,y,z) {
+                    this.x = x;
+                    this.y = y;
+                    this.z = z;
+                    this.replaced = '';
+                }
+                move(key) {
+                    switch (key) {
+                        case 'a':
+                            if (this.x > 0 && grid[this.z][this.y][this.x-1]=='red') {
+                                grid[this.z][this.y][this.x] = this.replaced
+                                this.x--;
+                                this.replaced = grid[this.z][this.y][this.x]
+                            }
+                        break;
+                        case 's':
+                            if (this.y < 49 && grid[this.z][this.y+1][this.x]=='red') {
+                                grid[this.z][this.y][this.x] = this.replaced
+                                this.y++;
+                                this.replaced = grid[this.z][this.y][this.x]
+                            }
+                        break;
+                        case 'd':
+                            if (this.x < 49 && grid[this.z][this.y][this.x+1]=='red') {
+                                grid[this.z][this.y][this.x] = this.replaced
+                                this.x++;
+                                this.replaced = grid[this.z][this.y][this.x]
+                            }
+                        break;
+                        case 'w':
+                            if (this.y > 0 && grid[this.z][this.y-1][this.x]=='red') {
+                                grid[this.z][this.y][this.x] = this.replaced
+                                this.y--;
+                                this.replaced = grid[this.z][this.y][this.x]
+                            }
+                        break;
+                        case 'q':
+                            if (this.z > 0 && grid[this.z-1][this.y][this.x]=='red') {
+                                grid[this.z][this.y][this.x] = this.replaced
+                                this.z--;
+                                this.replaced = grid[this.z][this.y][this.x]
+                            }
+                        break;
+                        case 'e':
+                            if (this.z < 49 && grid[this.z+1][this.y][this.x]=='red') {
+                                grid[this.z][this.y][this.x] = this.replaced
+                                this.z++;
+                                this.replaced = grid[this.z][this.y][this.x]
+                            }
+                        break;
+                    }
+                    draw();
+                }
+            }
+
+            const player = new Player(4,5,4);
+            draw();
+
+            function render(ctx, matrix) {
+                matrix.forEach((y,yi)=>{
+                    y.forEach((x,xi)=>{
+                        ctx.fillStyle = x;
+                        ctx.fillRect(xi*6,yi*6,6,6);
+                        ctx.strokeStyle = 'black';
+                        ctx.strokeRect(xi*6,yi*6,6,6);
+                    })
+                })
+            }
+
+            function mainRender() {
+                render(fctx,grid[player.z]);
+                let tempS = new Array();
+                grid.forEach((z,zi)=>{
+                    tempS.push([]);
+                    z.forEach(y=>{
+                        tempS[zi].push(y[player.x]);
+                    })
+                })
+                tempS = rotateMatrixAnti(tempS);
+                render(sctx,rotateMatrixAnti(rotateMatrixAnti(tempS.map(x=>x.reverse()))));
+
+                let tempT = [];
+                grid.forEach(z=>{
+                    tempT.push(z[player.y]);
+                })
+                tempT.reverse();
+                render(tctx,tempT);
+            }
+
+            mainRender();
+
+            document.addEventListener('keydown',(e)=>{
+                player.move(e.key);
+            })
+
+            function draw() {
+                fctx.clearRect(0,0,300,300);
+                tctx.clearRect(0,0,300,300);
+                sctx.clearRect(0,0,300,300);
+
+                grid[player.z][player.y][player.x] = 'green';
+                mainRender();
+            }
+
+            // setInterval(()=>{
+            //     if (grid[player.z]?.[player.y+1]?.[player.x] == 'blue') {
+            //         player.move('s');
+            //     }
+            // },1000);
+        </script>
+    </body>
+</html>
