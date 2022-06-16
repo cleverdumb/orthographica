@@ -36,6 +36,15 @@
             // let hgrid = [];
             let grid = [];
 
+            let hgrid = [];
+
+            for (let y=0; y<50; y++) {
+                hgrid.push([]);
+                for (let x=0; x<50; x++) {
+                    hgrid[y].push(10);
+                }
+            }
+
             // for (let y=0; y<50; y++) {
             //     hgrid.push([]);
             //     for (let x=0; x<50; x++) {
@@ -43,39 +52,39 @@
             //     }
             // }
 
-            // for (let a=0; a<450; a++) {
-            //     hgrid[Math.round(Math.random()*49)][Math.round(Math.random()*49)] = Math.round(Math.random()*30);
-            // }
+            for (let a=0; a<450; a++) {
+                hgrid[Math.round(Math.random()*49)][Math.round(Math.random()*49)] = Math.round(Math.random()*30);
+            }
 
-            // let unused = [];
+            let unused = [];
 
-            // hgrid.forEach((y,yi)=>{
-            //     y.forEach((x,xi)=>{
-            //         if (hgrid[yi][xi] == 0) {
-            //             unused.push({x:xi,y:yi});
-            //         }
-            //     })
-            // })
+            hgrid.forEach((y,yi)=>{
+                y.forEach((x,xi)=>{
+                    if (hgrid[yi][xi] == 0) {
+                        unused.push({x:xi,y:yi});
+                    }
+                })
+            })
 
-            // unused = unused.sort(()=>Math.random()-0.5);
+            unused = unused.sort(()=>Math.random()-0.5);
 
-            // unused.forEach(item=>{
-            //     let x = item.x;
-            //     let y = item.y;
-            //     let sum = 0;
-            //     sum += hgrid[y-1]?.[x] || 0;
-            //     sum += hgrid[y+1]?.[x] || 0;
-            //     sum += hgrid[y]?.[x-1] || 0;
-            //     sum += hgrid[y]?.[x+1] || 0;
-            //     sum += hgrid[y-1]?.[x-1] || 0;
-            //     sum += hgrid[y-1]?.[x+1] || 0;
-            //     sum += hgrid[y+1]?.[x-1] || 0;
-            //     sum += hgrid[y+1]?.[y+1] || 0;
-            //     sum /= 200;
-            //     sum += 35;
-            //     sum += Math.round(Math.random()*4)-4;
-            //     hgrid[y][x] = Math.round(sum);
-            // })
+            unused.forEach(item=>{
+                let x = item.x;
+                let y = item.y;
+                let sum = 0;
+                sum += hgrid[y-1]?.[x] || 0;
+                sum += hgrid[y+1]?.[x] || 0;
+                sum += hgrid[y]?.[x-1] || 0;
+                sum += hgrid[y]?.[x+1] || 0;
+                sum += hgrid[y-1]?.[x-1] || 0;
+                sum += hgrid[y-1]?.[x+1] || 0;
+                sum += hgrid[y+1]?.[x-1] || 0;
+                sum += hgrid[y+1]?.[y+1] || 0;
+                sum /= 200;
+                sum += 35;
+                sum += Math.round(Math.random()*4)-4;
+                hgrid[y][x] = Math.round(sum);
+            })
 
             // let max = -Infinity;
             // let aver = 0;
@@ -88,40 +97,44 @@
             //     })
             // })
 
-            // // console.log(grid);
-            // // console.log(max);
-            // // console.log(aver/2500);
+            // console.log(grid);
+            // console.log(max);
+            // console.log(aver/2500);
 
-            // for (let a=0; a<4; a++) {
-            //     hgrid.forEach((y,yi)=>{
-            //         y.forEach((x,xi)=>{
-            //             let sum = 0;
-            //             sum += hgrid[yi+1]?.[xi] || 0;
-            //             sum += hgrid[yi-1]?.[xi] || 0;
-            //             sum += hgrid[yi]?.[xi+1] || 0;
-            //             sum += hgrid[yi]?.[xi-1] || 0;
-            //             if (hgrid[yi][xi] < sum/4) {
-            //                 hgrid[yi][xi]++;
-            //             }
-            //             else if (hgrid[yi][xi] > sum/4) {
-            //                 hgrid[yi][xi]--;
-            //             }
+            for (let a=0; a<4; a++) {
+                hgrid.forEach((y,yi)=>{
+                    y.forEach((x,xi)=>{
+                        let sum = 0;
+                        sum += hgrid[yi+1]?.[xi] || 0;
+                        sum += hgrid[yi-1]?.[xi] || 0;
+                        sum += hgrid[yi]?.[xi+1] || 0;
+                        sum += hgrid[yi]?.[xi-1] || 0;
+                        if (hgrid[yi][xi] < sum/4) {
+                            hgrid[yi][xi]++;
+                        }
+                        else if (hgrid[yi][xi] > sum/4) {
+                            hgrid[yi][xi]--;
+                        }
 
-            //             sum = 0;
-            //             sum += hgrid[yi+2]?.[xi+2] || 0;
-            //             sum += hgrid[yi-2]?.[xi-2] || 0;
-            //             sum += hgrid[yi-2]?.[xi+2] || 0;
-            //             sum += hgrid[yi+2]?.[xi-2] || 0;
+                        sum = 0;
+                        sum += hgrid[yi+2]?.[xi+2] || 0;
+                        sum += hgrid[yi-2]?.[xi-2] || 0;
+                        sum += hgrid[yi-2]?.[xi+2] || 0;
+                        sum += hgrid[yi+2]?.[xi-2] || 0;
 
-            //             if (hgrid[yi][xi] - 5 > sum/8) {
-            //                 hgrid[yi][xi] -= 5;
-            //             }
-            //             else if (hgrid[yi][xi] + 5 < sum/8) {
-            //                 hgrid[yi][xi] += 5;
-            //             }
-            //         })
-            //     })
-            // }
+                        if (hgrid[yi][xi] - 5 > sum/8) {
+                            hgrid[yi][xi] -= 5;
+                        }
+                        else if (hgrid[yi][xi] + 5 < sum/8) {
+                            hgrid[yi][xi] += 5;
+                        }
+                    })
+                })
+            }
+
+            hgrid = hgrid.map(y=>{
+                return y.map(x=>x+10)
+            })
 
             // console.log(hgrid);
 
@@ -132,15 +145,6 @@
                     for (let x=0; x<50; x++) {
                         grid[z][y].push(0);
                     }
-                }
-            }
-
-            let hgrid = [];
-
-            for (let y=0; y<50; y++) {
-                hgrid.push([]);
-                for (let x=0; x<50; x++) {
-                    hgrid[y].push(10);
                 }
             }
 
@@ -228,7 +232,6 @@
                         else {
                             grid[zi][yi][xi] = 'red';
                         }
-
                         // grid[zi][yi][xi] = Math.random()>0.5?'red':'blue';
                     })
                 })
