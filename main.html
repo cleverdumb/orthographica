@@ -149,10 +149,10 @@
             }
 
             class Mountain {
-                constructor(x,y) {
+                constructor(x,y,peak) {
                     this.x = x;
                     this.y = y;
-                    this.peak = 30;
+                    this.peak = peak;
                     this.target = 10;
                     this.genedBlocks = [];
                     this.buffer = [];
@@ -205,8 +205,8 @@
             }
 
             let mountains = [];
-            for (let x=0; x<5; x++) {
-                mountains.push(new Mountain(Math.round(Math.random()*49),Math.round(Math.random()*49)))
+            for (let x=0; x<3; x++) {
+                mountains.push(new Mountain(Math.round(Math.random()*49),Math.round(Math.random()*49),Math.round(Math.random()*10+25)))
             }
             mountains.forEach(x=>{
                 x.generate();
@@ -376,11 +376,16 @@
                 mainRender();
             }
 
-            // setInterval(()=>{
-            //     if (grid[player.z]?.[player.y+1]?.[player.x] == 'blue') {
-            //         player.move('s');
-            //     }
-            // },1000);
+            let fallCd = 1000;
+
+            setInterval(()=>{
+                if (grid[player.z]?.[player.y+1]?.[player.x] == 'red') {
+                    player.move('s');
+                }
+                else {
+                    fallCd = 1000;
+                }
+            },fallCd*=0.9);
         </script>
     </body>
 </html>
